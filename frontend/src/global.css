@@ -62,7 +62,6 @@ form textarea {
 
 .button:hover {
   filter: brightness(90%);
-  text-decoration: underline;
 }
 
 .back-link {
