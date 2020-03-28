@@ -19,6 +19,7 @@ module.exports = {
             city,
             uf
         })
+        console.log('Nova ONG cadastrada -> ','Nome:',name,'ID:',id)        
         res.send({ ong_id: id})
     },
 

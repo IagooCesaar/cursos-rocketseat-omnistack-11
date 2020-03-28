@@ -11,7 +11,7 @@ module.exports = {
       ong_id
     });
     res.json({id})
-    
+    console.log('Novo incidente cadastrado -> ','ONG:',ong_id,'Incidente:',title)
   },
 
   async index(req, res) {
@@ -57,7 +57,8 @@ module.exports = {
     await conn('incidents')
     .where('id', id)
     .delete();
-    
+  
+    console.log('Incidente deletado -> ','ONG:',ong_id,'Incidente:',id)
     return res.status(204).send();
   }
 }

@@ -15,6 +15,7 @@ module.exports = {
           error: 'No ONG found whit this id'
         })
       }
+      console.log('Nova sessão registrada -> ','ONG:',id)
       res.json(ong)
   }
 }
