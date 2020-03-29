@@ -45,3 +45,20 @@
 
       obter acesso em : resquest.headers
 
+// -----------------------------------
+   Configurando o banco de dados
+
+   • Instalando pacote:
+      npm install knex --save 
+
+   • Instalando pacote específico para o banco de dados escolhido
+      npm install sqlite3
+
+   • Preparar aquivo de scripts
+      npx knex init 
+
+   • Criar migration
+      npx knex migration:make "nome da migration"
+
+   • Executar migration
+      npx knex migrate:latest
