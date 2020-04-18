@@ -56,8 +56,11 @@ const show = async (req, h) => {
   return result;
 };
 
+const update = async (req, h) => {};
+
 module.exports = {
   create,
   index,
   show,
+  update,
 };

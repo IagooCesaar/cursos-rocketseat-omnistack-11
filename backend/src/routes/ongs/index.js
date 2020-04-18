@@ -18,7 +18,20 @@ class OngsRoutes extends BaseRoute {
       options: {
         validate: {
           failAction,
-          payload: ongSchema.toCreate,
+          ...ongSchema.toCreate,
+        },
+      },
+    };
+  }
+
+  update() {
+    return {
+      method: "PATCH",
+      path: basePath + "/{id}",
+      handler: ongHandler.update,
+      options: {
+        validate: {
+          ...ongSchema.toUpdate,
         },
       },
     };
@@ -40,7 +53,7 @@ class OngsRoutes extends BaseRoute {
       options: {
         validate: {
           failAction,
-          params: ongSchema.toShow,
+          ...ongSchema.toShow,
         },
       },
     };
