@@ -4,13 +4,20 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "cross-env NODE_ENV=test mocha ./tests/*.test.js",
+    "test": "cross-env NODE_ENV=test mocha ./tests/*/*.test.js",
     "dev": "cross-env NODE_ENV=dev nodemon ./src/api.js"
   },
   "dependencies": {
+    "@hapi/hapi": "^19.1.1",
+    "@hapi/joi": "^17.1.1",
+    "bcryptjs": "^2.4.3",
+    "boom": "^7.3.0",
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
-    "hapi": "^18.1.0"
+    "ioredis": "^4.16.2",
+    "knex": "^0.20.15",
+    "pg": "^8.0.2",
+    "sqlite3": "^4.1.1"
   },
   "devDependencies": {
     "mocha": "^7.1.1",

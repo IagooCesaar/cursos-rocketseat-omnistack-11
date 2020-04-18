@@ -1,0 +1,36 @@
+version: "3"
+services:
+  redis:
+    image: redis:5.0.5-alpine
+    container_name: omnistack11-container-redis
+    ports:
+      - "6379:6349"
+    networks:
+      - backend
+  postgres:
+    image: postgres
+    container_name: omnistack11-container-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: sysdba
+      POSTGRES_PASSWORD: masterkey
+      POSTGRES_DB: omnistack11
+
+    networks:
+      - backend
+  adminer:
+    image: adminer
+    container_name: omnistack11-container-adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    links:
+      - "postgres"
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: "bridge"

@@ -10,26 +10,33 @@ config({
   path: envPath,
 });
 
-const Hapi = require("hapi");
+const Hapi = require("@hapi/hapi");
+
+const Routes = require("./routes");
 
 const app = Hapi.Server({
+  host: process.env.HOST,
   port: process.env.PORT,
 });
 
-async function api() {
-  app.route([
-    {
-      path: "/",
-      method: "GET",
-      handler: (req, h) => {
-        return { message: "Olá" };
-      },
-    },
-  ]);
+const db = require("./database/knex");
+async function makeDB() {
+  await db.migrate.latest();
+}
+makeDB();
 
+async function api() {
+  console.log("=> Importando rotas");
+  app.route(Routes);
+  console.log("=> Iniciando o servidor");
   await app.start();
   console.log(
     `O servidor está em funcionamento. Acesse: http://localhost:${app.info.port}`
   );
+  return app;
 }
+process.on("unhandledRejection", (err) => {
+  console.error("Erro não tratado => ", err);
+});
+
 module.exports = api();
