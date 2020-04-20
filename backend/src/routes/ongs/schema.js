@@ -31,6 +31,7 @@ const toUpdate = {
     ),
     city: Joi.string(),
     uf: Joi.string().length(2),
+    active: Joi.boolean(),
   }),
   params: Joi.object({
     id: Joi.number().integer().required(),
@@ -42,8 +43,16 @@ const toShow = {
     id: Joi.number().integer().required(),
   }),
 };
+
+const toDelete = {
+  params: Joi.object({
+    id: Joi.number().integer().required(),
+  }),
+};
+
 module.exports = {
   toCreate,
   toShow,
   toUpdate,
+  toDelete,
 };

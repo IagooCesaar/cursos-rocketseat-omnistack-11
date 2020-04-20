@@ -16,6 +16,9 @@ class OngsRoutes extends BaseRoute {
       path: basePath,
       handler: ongHandler.create,
       options: {
+        tags: ["api", "ongs"],
+        description: "Cadastrar uma nova ONG",
+        notes: "Cadastrará uma nova ONG quando respeitado os parâmetros",
         validate: {
           failAction,
           ...ongSchema.toCreate,
@@ -30,6 +33,10 @@ class OngsRoutes extends BaseRoute {
       path: basePath + "/{id}",
       handler: ongHandler.update,
       options: {
+        tags: ["api", "ongs"],
+        description: "Atualizar o cadastro de uma nova ONG",
+        notes:
+          "Atualizará o cadastro de uma ONG quando respeitado os parâmetros",
         validate: {
           ...ongSchema.toUpdate,
         },
@@ -42,6 +49,11 @@ class OngsRoutes extends BaseRoute {
       method: "GET",
       path: basePath,
       handler: ongHandler.index,
+      options: {
+        tags: ["api", "ongs"],
+        description: "Lista de ONGs",
+        notes: "Retornará uma lista de todas as ONGs cadastradas",
+      },
     };
   }
 
@@ -51,9 +63,30 @@ class OngsRoutes extends BaseRoute {
       path: basePath + "/{id}",
       handler: ongHandler.show,
       options: {
+        tags: ["api", "ongs"],
+        description: "Dados de determinada ONG",
+        notes:
+          "Retornará os dados cadastrais de uma ONG quando respeitado os parâmetros",
         validate: {
           failAction,
           ...ongSchema.toShow,
+        },
+      },
+    };
+  }
+
+  delete() {
+    return {
+      method: "DELETE",
+      path: basePath + "/{id}",
+      handler: ongHandler.deleteOne,
+      options: {
+        tags: ["api", "ongs"],
+        description: "Desativar uma ONG",
+        notes: "Desativará o cadastro de uma ONG",
+        validate: {
+          failAction,
+          ...ongSchema.toDelete,
         },
       },
     };

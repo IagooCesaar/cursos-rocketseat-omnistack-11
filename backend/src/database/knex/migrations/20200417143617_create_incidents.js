@@ -5,6 +5,7 @@ exports.up = function (knex) {
     table.string("title").notNullable();
     table.string("description").notNullable();
     table.decimal("value").notNullable();
+    table.boolean("active").notNullable().defaultTo(true);
 
     table.foreign("ong_id").references("id").inTable("ongs");
   });

@@ -1,29 +1,25 @@
 const assert = require("assert");
+const boom = require("@hapi/boom");
 const api = require("../../src/api");
 
 let app = {};
 
-const MOCK_ONG = {
-  name: "ONG TESTE",
-  email: "teste@teste.com",
-  password: "abc123",
-  whatsapp: "5535998155841",
-  city: "São Gonçalo do Sapucaí",
-  uf: "MG",
-};
+const { MOCK_ONG_1, MOCK_ONG_2 } = require("../mock/ongs");
 
 function JsonObj(jsonAsString) {
   return JSON.parse(jsonAsString);
 }
 
 describe("## Suíte de testes da rota de ONGS", function () {
+  this.timeout(Infinity);
+
   this.beforeAll(async () => {
     app = await api;
   });
 
-  it("Deverá cadastrar um ONG", async () => {
+  it("Deverá cadastrar uma ONG", async () => {
     let ongToCreate = {
-      ...MOCK_ONG,
+      ...MOCK_ONG_1,
     };
 
     const result = await app.inject({
@@ -31,23 +27,39 @@ describe("## Suíte de testes da rota de ONGS", function () {
       url: "/ongs",
       payload: ongToCreate,
     });
-
     let [dados] = JSON.parse(result.payload);
-    delete ongToCreate.password;
-    delete dados.password;
-    delete dados.id;
 
-    assert.ok((result.statusCode = 200), "Não houve êxito no retorno");
-    assert.deepEqual(
-      dados,
-      ongToCreate,
-      "O retorno do cadastro da ONG não está como esperado"
-    );
+    delete ongToCreate.password;
+    delete dados.id;
+    delete dados.active;
+
+    assert.deepEqual(result.statusCode, 201);
+    assert.deepEqual(dados, ongToCreate);
+  });
+
+  it("NÃO deverá cadastrar uma ONG de mesmo e-mail", async () => {
+    let ongToCreate = {
+      ...MOCK_ONG_1,
+    };
+    const expectedError = {
+      statusCode: 422,
+      error: "Unprocessable Entity",
+      message: "Já existe uma ONG cadastrada com este e-mail",
+    };
+
+    const result = await app.inject({
+      method: "POST",
+      url: "/ongs",
+      payload: ongToCreate,
+    });
+    const dados = JsonObj(result.payload);
+
+    assert.deepEqual(dados, expectedError);
   });
 
   it("NÃO deverá cadastrar um ONG por erro no payload - nome obrigatório", async () => {
     let wrongOng = {
-      ...MOCK_ONG,
+      ...MOCK_ONG_1,
     };
     delete wrongOng.name;
 
@@ -77,7 +89,7 @@ describe("## Suíte de testes da rota de ONGS", function () {
 
   it("NÃO deverá cadastrar um ONG por erro no payload - e-mail inválido", async () => {
     let wrongOng = {
-      ...MOCK_ONG,
+      ...MOCK_ONG_1,
       email: "error",
     };
 
@@ -156,7 +168,140 @@ describe("## Suíte de testes da rota de ONGS", function () {
     );
   });
 
-  this.afterAll(async () => {
-    app.stop();
+  it("Deverá atualizar o cadastro de uma ONG", async () => {
+    let ongToUpdate = {
+      name: "ONG TESTE UPD",
+    };
+    const ongID = 1;
+
+    const result = await app.inject({
+      method: "PATCH",
+      url: `/ongs/${ongID}`,
+      payload: ongToUpdate,
+    });
+    let [dados] = JSON.parse(result.payload);
+
+    assert.ok(
+      result.statusCode === 200,
+      `Retorno diferente de 200: ${result.statusCode}`
+    );
+    assert.deepEqual(dados.name, ongToUpdate.name);
   });
+
+  it("NÃO deverá atualizar o cadastro de uma ONG com ID inválido", async () => {
+    let ongToUpdate = {
+      name: "ONG TESTE UPD",
+    };
+    const ongID = "AAAA";
+
+    const expectedError = {
+      statusCode: 400,
+      error: "Bad Request",
+      message: "Invalid request params input",
+    };
+
+    const result = await app.inject({
+      method: "PATCH",
+      url: `/ongs/${ongID}`,
+      payload: ongToUpdate,
+    });
+    let dados = JSON.parse(result.payload);
+
+    assert.deepEqual(dados, expectedError);
+  });
+
+  it("NÃO deverá atualizar o cadastro de uma ONG com ID inexistente", async () => {
+    let ongToUpdate = {
+      name: "ONG TESTE UPD",
+    };
+    const ongID = -1;
+
+    const expectedError = {
+      error: "Precondition Failed",
+      message: "Não foi possível encontrar uma ONG com o ID fornecido ",
+      statusCode: 412,
+    };
+
+    const result = await app.inject({
+      method: "PATCH",
+      url: `/ongs/${ongID}`,
+      payload: ongToUpdate,
+    });
+    let dados = JSON.parse(result.payload);
+
+    assert.deepEqual(dados, expectedError);
+  });
+
+  it("NÃO deverá atualizar o cadastro de uma ONG pois e-mail está uso por outra entidade", async () => {
+    let ongToCreate = {
+      ...MOCK_ONG_2(Date.now()),
+    };
+    const result1 = await app.inject({
+      method: "POST",
+      url: "/ongs",
+      payload: ongToCreate,
+    });
+    let [dados1] = JSON.parse(result1.payload);
+    delete dados1.id;
+    delete dados1.active;
+    delete ongToCreate.password;
+
+    assert.ok((result1.statusCode = 200), "Não houve êxito no retorno");
+    assert.deepEqual(dados1, ongToCreate);
+
+    let ongToUpdate = {
+      name: "ONG TESTE 2 - UPD",
+      email: MOCK_ONG_1.email,
+    };
+    const ongID = 2;
+
+    const expectedError = {
+      statusCode: 400,
+      error: "Bad Request",
+      message:
+        "Não será possível alterar o e-mail da ONG pois o mesmo está em uso por outra entidade",
+    };
+    const result2 = await app.inject({
+      method: "PATCH",
+      url: `/ongs/${ongID}`,
+      payload: ongToUpdate,
+    });
+    const dados2 = JSON.parse(result2.payload);
+
+    assert.deepEqual(dados2, expectedError);
+  });
+
+  it("Deverá deletar/desativar o cadastro de uma ONG", async () => {
+    let ongToCreate = {
+      ...MOCK_ONG_2(Date.now()),
+    };
+
+    const result1 = await app.inject({
+      method: "POST",
+      url: "/ongs",
+      payload: ongToCreate,
+    });
+    let [dados1] = JSON.parse(result1.payload);
+
+    assert.deepEqual(result1.statusCode, 201);
+    const idToDelete = dados1.id;
+
+    const result2 = await app.inject({
+      method: "DELETE",
+      url: `/ongs/${idToDelete}`,
+    });
+
+    const dados2 = JSON.parse(result2.payload);
+
+    assert.deepEqual(result2.statusCode, 200);
+    assert.deepEqual(dados2.result[0].active, false);
+    assert.deepEqual(
+      dados2.message,
+      "Não é permitido deletar ONGs. O registro foi desativado"
+    );
+  });
+
+  // this.afterAll(async () => {
+  //   app.stop();
+  // });
 });
