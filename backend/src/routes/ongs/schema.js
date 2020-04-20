@@ -1,6 +1,9 @@
 const Joi = require("@hapi/joi");
 
+const headers = require("../../auth/strategies").getDefault().headersScheme;
+
 const toCreate = {
+  headers,
   payload: Joi.object({
     name: Joi.string().required(),
     email: Joi.string()
@@ -18,7 +21,12 @@ const toCreate = {
   }),
 };
 
+const toIndex = {
+  headers,
+};
+
 const toUpdate = {
+  headers,
   payload: Joi.object({
     name: Joi.string(),
     email: Joi.string().email({
@@ -39,12 +47,14 @@ const toUpdate = {
 };
 
 const toShow = {
+  headers,
   params: Joi.object({
     id: Joi.number().integer().required(),
   }),
 };
 
 const toDelete = {
+  headers,
   params: Joi.object({
     id: Joi.number().integer().required(),
   }),
@@ -52,6 +62,7 @@ const toDelete = {
 
 module.exports = {
   toCreate,
+  toIndex,
   toShow,
   toUpdate,
   toDelete,

@@ -53,6 +53,10 @@ class OngsRoutes extends BaseRoute {
         tags: ["api", "ongs"],
         description: "Lista de ONGs",
         notes: "Retornará uma lista de todas as ONGs cadastradas",
+        validate: {
+          failAction,
+          ...ongSchema.toIndex,
+        },
       },
     };
   }

@@ -13,7 +13,8 @@ const findByID = async (ID) => {
 const findByEmail = async (email) => {
   const result = await db("ongs")
     .where("email", email.toLowerCase())
-    .select("id", "name", "email", "whatsapp", "city", "uf");
+    // .select("id", "name", "email", "whatsapp", "city", "uf");
+    .select("*");
   return result;
 };
 

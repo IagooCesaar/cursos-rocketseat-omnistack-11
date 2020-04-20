@@ -16,6 +16,7 @@ const Hapi = require("@hapi/hapi");
 const Vision = require("@hapi/vision");
 const Inert = require("@hapi/inert");
 const HapiSwagger = require("hapi-swagger");
+const HapiJwt = require("hapi-auth-jwt2");
 
 const hapiSwaggerPlugin = {
   plugin: HapiSwagger,
@@ -34,6 +35,7 @@ const hapiSwaggerPlugin = {
 };
 
 const Routes = require("./routes");
+const { strategies } = require("./auth/strategies");
 
 const app = Hapi.Server({
   host: process.env.HOST,
@@ -50,7 +52,18 @@ async function api() {
   await makeDB();
 
   console.log("=> Registrando plugins");
-  await app.register([Vision, Inert, hapiSwaggerPlugin]);
+  await app.register([HapiJwt, Vision, Inert, hapiSwaggerPlugin]);
+
+  console.log(
+    `=> Preparando ${strategies.length} estratégia(s) de autenticação da API`
+  );
+  let defaultStrategy = "";
+  strategies.map((strategy) => {
+    app.auth.strategy(strategy.name, strategy.scheme, strategy.options);
+    if (strategy.default && defaultStrategy === "")
+      defaultStrategy = strategy.name;
+  });
+  app.auth.default(defaultStrategy || "jwt");
 
   console.log("=> Importando rotas");
   app.route(Routes);
