@@ -13,6 +13,9 @@ class UtilRoutes extends BaseRoute {
       handler: function (req, h) {
         return h.redirect("/documentation");
       },
+      options: {
+        auth: false,
+      },
     };
   }
 }
