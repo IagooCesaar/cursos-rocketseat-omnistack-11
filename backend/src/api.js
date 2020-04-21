@@ -18,6 +18,12 @@ const Inert = require("@hapi/inert");
 const HapiSwagger = require("hapi-swagger");
 const HapiJwt = require("hapi-auth-jwt2");
 
+const Routes = require("./routes");
+const { strategies } = require("./auth/strategies");
+
+const db = require("./database/knex");
+const Cache = require("./database/redis");
+
 const hapiSwaggerPlugin = {
   plugin: HapiSwagger,
   options: {
@@ -34,22 +40,25 @@ const hapiSwaggerPlugin = {
   },
 };
 
-const Routes = require("./routes");
-const { strategies } = require("./auth/strategies");
-
 const app = Hapi.Server({
   host: process.env.HOST,
   port: process.env.PORT,
 });
 
-const db = require("./database/knex");
 async function makeDB() {
   await db.migrate.latest();
+}
+
+async function initiateCache() {
+  await Cache.connect();
 }
 
 async function api() {
   console.log("=> Atualizando metadados do BD");
   await makeDB();
+
+  console.log("=> Inicializando o Cache");
+  await initiateCache();
 
   console.log("=> Registrando plugins");
   await app.register([HapiJwt, Vision, Inert, hapiSwaggerPlugin]);

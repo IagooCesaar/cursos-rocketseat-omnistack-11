@@ -1,5 +1,7 @@
 const Joi = require("@hapi/joi");
 
+const headers = require("../../auth/strategies").getDefault().headersScheme;
+
 const toLogin = {
   payload: Joi.object({
     email: Joi.string()
@@ -18,7 +20,12 @@ const toSecondFactorAuthentication = {
   }),
 };
 
+const toLogout = {
+  headers,
+};
+
 module.exports = {
   toLogin,
   toSecondFactorAuthentication,
+  toLogout,
 };

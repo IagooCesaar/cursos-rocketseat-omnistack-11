@@ -28,10 +28,15 @@ const login = async (req, h) => {
     }
 
     const jwtData = {
-      sub: ong.id, //subject: sujeito
+      sub: ong.id,
       exp: Math.floor(Date.now() / 1000) + 60 * LOGIN_EXPIRATION_MINUTES,
+      data: {
+        ongID: ong.id,
+      },
     };
     const token = await Token.generate(jwtData);
+
+    repoOngs.setCache(ong);
 
     return h.response({ token }).code(201);
   } catch (error) {
@@ -54,7 +59,29 @@ const secondFactorAuthentication = (req, h) => {
   return { message: "ok" };
 };
 
+const logout = async (req, h) => {
+  const { credentials, artifacts } = req.auth;
+  // console.log("Tentativa de logout", credentials, artifacts);
+  try {
+    await Promise.all([
+      Token.invalidate(artifacts.token, LOGIN_EXPIRATION_MINUTES),
+      repoOngs.removeCache(credentials.data.ongID),
+    ]);
+    return h
+      .response({
+        message: `Logout realizado para Ong ID ${credentials.data.ongID}`,
+      })
+      .code(201);
+  } catch (error) {
+    switch (error.message) {
+      default:
+        throw boom.badImplementation(error);
+    }
+  }
+};
+
 module.exports = {
   login,
   secondFactorAuthentication,
+  logout,
 };

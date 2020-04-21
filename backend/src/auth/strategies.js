@@ -1,10 +1,21 @@
 const Joi = require("@hapi/joi");
 
 const { ALGORITHM } = require("./config");
+const repoOngs = require("../repositories/ongs.repository");
+const Token = require("./token.auth");
 
 const headersScheme = Joi.object({
   authorization: Joi.string().required(),
 }).unknown();
+
+const validate = async (decoded, request, h) => {
+  const { token } = request.auth;
+  const exists = await repoOngs.existingCache(decoded.data.ongID);
+  const invalidated = await Token.hasInvalidated(token);
+  return {
+    isValid: exists || !invalidated,
+  };
+};
 
 const strategies = [
   {
@@ -14,12 +25,7 @@ const strategies = [
     scheme: "jwt",
     options: {
       key: process.env.JWT_KEY,
-      validate: async (decoded, request, h) => {
-        console.log("Dados do token => ", decoded);
-        return {
-          isValid: true,
-        };
-      },
+      validate,
       verifyOptions: {
         algorithms: [ALGORITHM],
       },
@@ -32,12 +38,7 @@ const strategies = [
     scheme: "jwt",
     options: {
       key: process.env.JWT_KEY,
-      validate: async (decoded, request, h) => {
-        console.log("Dados do token => ", decoded);
-        return {
-          isValid: true,
-        };
-      },
+      validate,
       verifyOptions: {
         algorithms: [ALGORITHM],
       },

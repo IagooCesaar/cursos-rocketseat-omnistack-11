@@ -17,7 +17,8 @@ class SessionRoutes extends BaseRoute {
         auth: false,
         tags: ["api", "session"],
         description: "Iniciar uma nova sessão",
-        notes: "Cadastrará uma nova ONG quando respeitado os parâmetros",
+        notes:
+          "Irá iniciar uma sesssão de uma ONG e retornará um token de acesso",
         validate: {
           failAction,
           ...sessionSchema.toLogin,
@@ -39,6 +40,23 @@ class SessionRoutes extends BaseRoute {
         validate: {
           failAction,
           ...sessionSchema.toSecondFactorAuthenticationCreate,
+        },
+      },
+    };
+  }
+
+  logout() {
+    return {
+      method: "POST",
+      path: "/logout",
+      handler: sessionHandler.logout,
+      options: {
+        tags: ["api", "session"],
+        description: "Encerrar uma sessão",
+        notes: "Irá encerrar a última sessão da ONG autenticada",
+        validate: {
+          failAction,
+          ...sessionSchema.toLogout,
         },
       },
     };

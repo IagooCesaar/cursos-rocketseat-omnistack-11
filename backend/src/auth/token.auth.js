@@ -1,5 +1,10 @@
 const jwt = require("jsonwebtoken");
-const { DEFAULT_EXPIRATION_MINUTE, ALGORITHM } = require("./config");
+const {
+  DEFAULT_EXPIRATION_MINUTE,
+  ALGORITHM,
+  BLACKLIST_TOKEN_CACHE_PREFIX,
+} = require("./config");
+const Cache = require("../repositories/cache.repository");
 
 const generate = (payload) => {
   return new Promise((resolve, reject) => {
@@ -25,6 +30,14 @@ const generate = (payload) => {
   });
 };
 
+const invalidate = (token, expiration = DEFAULT_EXPIRATION_MINUTE) =>
+  Cache.set(`${BLACKLIST_TOKEN_CACHE_PREFIX}${token}`, 1, expiration);
+
+const hasInvalidated = (token) =>
+  Cache.exists(`${BLACKLIST_TOKEN_CACHE_PREFIX}${token}`);
+
 module.exports = {
   generate,
+  invalidate,
+  hasInvalidated,
 };

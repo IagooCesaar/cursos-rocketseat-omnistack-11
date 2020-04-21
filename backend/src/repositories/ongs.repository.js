@@ -1,6 +1,23 @@
 const db = require("../database/knex");
+const Cache = require("./cache.repository");
+const { LOGIN_EXPIRATION_MINUTES } = require("../auth/config");
 
 const canLog = process.env.CAN_LOG || false === true;
+
+const prefixoCache = "ongID:";
+
+const setCache = (ong) =>
+  Cache.set(
+    `${prefixoCache}${ong.id}`,
+    JSON.stringify(ong),
+    LOGIN_EXPIRATION_MINUTES * 60
+  );
+
+const removeCache = (ongID) => Cache.del(`${prefixoCache}${ongID}`);
+
+const existingCache = (ongID) => {
+  return Cache.exists(`${prefixoCache}${ongID}`);
+};
 
 const findByID = async (ID) => {
   const result = await db("ongs")
@@ -21,4 +38,7 @@ const findByEmail = async (email) => {
 module.exports = {
   findByID,
   findByEmail,
+  setCache,
+  removeCache,
+  existingCache,
 };

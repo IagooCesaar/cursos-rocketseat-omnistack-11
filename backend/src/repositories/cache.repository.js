@@ -1,12 +1,19 @@
-const Redis = require("../database/redis/redis").get();
+const Redis = require("../database/redis");
 
 const set = (key, value, seconds) => {
-  Redis.set(Key, value, "EX", seconds);
+  const connRedis = Redis.get();
+  connRedis.set(key, value, "EX", seconds);
 };
 
-const exists = (key) => Redis.exists(key);
+const exists = async (key) => {
+  const connRedis = Redis.get();
+  return connRedis.get(key);
+};
 
-const del = (key) => Redis.del(key);
+const del = (key) => {
+  const connRedis = Redis.get();
+  connRedis.del(key);
+};
 
 module.exports = {
   set,

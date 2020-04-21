@@ -4,7 +4,10 @@ services:
     image: redis:5.0.5-alpine
     container_name: omnistack11-container-redis
     ports:
-      - "6379:6349"
+      - "6379:6379"
+    entrypoint: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - "./database/redis:/data"
     networks:
       - backend
   postgres:
@@ -13,6 +16,8 @@ services:
     restart: unless-stopped
     ports:
       - "5432:5432"
+    volumes:
+      - "/database/postgres:/var/lib/postgresql/data"
     environment:
       POSTGRES_USER: sysdba
       POSTGRES_PASSWORD: masterkey
