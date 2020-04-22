@@ -16,6 +16,7 @@ class OngsRoutes extends BaseRoute {
       path: basePath,
       handler: ongHandler.create,
       options: {
+        auth: false,
         tags: ["api", "ongs"],
         description: "Cadastrar uma nova ONG",
         notes: "Cadastrará uma nova ONG quando respeitado os parâmetros",

@@ -30,6 +30,16 @@ const generate = (payload) => {
   });
 };
 
+const decode = (token) => {
+  return new Promise((resolve, reject) => {
+    const options = {
+      complete: true,
+    };
+    const dados = jwt.decode(token, options);
+    resolve(dados);
+  });
+};
+
 const invalidate = (token, expiration = DEFAULT_EXPIRATION_MINUTE) =>
   Cache.set(`${BLACKLIST_TOKEN_CACHE_PREFIX}${token}`, 1, expiration);
 
@@ -38,6 +48,7 @@ const hasInvalidated = (token) =>
 
 module.exports = {
   generate,
+  decode,
   invalidate,
   hasInvalidated,
 };

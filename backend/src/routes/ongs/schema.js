@@ -3,7 +3,6 @@ const Joi = require("@hapi/joi");
 const headers = require("../../auth/strategies").getDefault().headersScheme;
 
 const toCreate = {
-  headers,
   payload: Joi.object({
     name: Joi.string().required(),
     email: Joi.string()

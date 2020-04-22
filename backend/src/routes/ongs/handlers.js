@@ -11,7 +11,6 @@ const canLog = process.env.CAN_LOG || false === true;
 const create = async (req, h) => {
   try {
     let { name, email, password, whatsapp, city, uf } = req.payload;
-    console.log("Cadastrando ONG " + name);
 
     email = email.toLowerCase();
     const existingOng = await repoOngs.findByEmail(email);
