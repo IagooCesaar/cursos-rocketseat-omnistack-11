@@ -17,7 +17,7 @@ let validToken = "";
 let validOng = "";
 let headers = {};
 
-describe.only("## Suíte de testes da rota de ONGS", function () {
+describe("## Suíte de testes da rota de ONGS", function () {
   this.timeout(Infinity);
 
   this.beforeAll(async () => {
