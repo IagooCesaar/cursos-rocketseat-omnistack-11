@@ -1,13 +1,1 @@
-{
-  "lastCreated": {
-    "id": 142,
-    "name": "ONG TESTE 1587650147431",
-    "email": "1587650147431@teste.com",
-    "whatsapp": "5535998155841",
-    "city": "São Gonçalo do Sapucaí",
-    "uf": "MG",
-    "active": 1,
-    "uncryptPassword": "abc123"
-  },
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE0MiwiZXhwIjoxNTg3NjgyNTQ3LCJkYXRhIjp7Im9uZ0lEIjoxNDJ9LCJpc3MiOiJhcGktQmVUaGVIZXJvIiwiaWF0IjoxNTg3NjUwMTQ3fQ.p5wGlqUZeIYtG5xAHvgySEn8nOvxoHucD34XvOAWb9I"
-}
+{}

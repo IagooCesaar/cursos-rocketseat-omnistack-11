@@ -7,14 +7,14 @@ const OngsDB = new Database("ongs");
 
 let app = {};
 
-const { MOCK_ONG_1, MOCK_ONG_2 } = require("../mock/ongs");
+const { MOCK_ONG_2 } = require("../mock/ongs");
 
 let validToken = "";
 let validOng = {};
 let invalidOng = {};
 let headers = {};
 
-describe.only("## Suíte de testes da rota de Casos", function () {
+describe("## Suíte de testes da rota de Casos", function () {
   this.beforeAll(async () => {
     let ongToCreate = {
       ...MOCK_ONG_2(Date.now()),

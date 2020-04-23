@@ -2,9 +2,6 @@ const assert = require("assert");
 const api = require("../../src/api");
 const { MOCK_ONG_2 } = require("../mock/ongs");
 
-const Database = require("../mock/database");
-const OngsDB = new Database("ongs");
-
 const { decode } = require("../../src/auth/token.auth");
 
 let app = {};
@@ -30,7 +27,6 @@ describe("## Suíte de testes da rota de sessão", function () {
     let [dados] = JSON.parse(result.payload);
     ong = dados;
     ong.uncryptPassword = ongToCreate.password;
-    OngsDB.setProp("lastCreated", ong);
 
     assert.deepEqual(result.statusCode, 201);
   });
@@ -48,8 +44,6 @@ describe("## Suíte de testes da rota de sessão", function () {
 
     const dados = JSON.parse(result.payload);
     token = dados.token;
-    OngsDB.setProp("token", token);
-    OngsDB.setProp("tokenFor", ong);
     decodedToken = await decode(token);
     assert.deepEqual(ong.id, decodedToken.payload.data.ongID);
   });
