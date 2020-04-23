@@ -35,7 +35,7 @@ const getAll = async (req, h) => {
 
 const create = async (req, h) => {
   const { ongID } = req.params;
-  const { credentials, artifacts } = req.auth;
+  const { credentials } = req.auth;
 
   if (ongID !== credentials.data.ongID) {
     return boom.forbidden("Você não poderá criar casos para outras ONGs");
@@ -53,7 +53,115 @@ const create = async (req, h) => {
   return h.response({ incidentID: id }).code(201);
 };
 
+const index = async (req, h) => {
+  const { ongID } = req.params;
+  const { credentials } = req.auth;
+
+  if (ongID !== credentials.data.ongID) {
+    return boom.forbidden("Você não poderá listar casos de outras ONGs");
+  }
+
+  const { page = 1 } = req.query;
+  const itensPerPage = 5;
+
+  const [count] = await db("incidents").where("ong_id", ongID).count();
+
+  const incidents = await db("incidents")
+    .join("ongs", "ongs.id", "=", "incidents.ong_id")
+    .where("ong_id", ongID)
+    .limit(itensPerPage)
+    .offset((page - 1) * itensPerPage)
+    .select([
+      "incidents.*",
+      "ongs.name",
+      "ongs.email",
+      "ongs.whatsapp",
+      "ongs.city",
+      "ongs.uf",
+    ]);
+
+  const response = h.response(incidents);
+  response.header("X-Total-Count", count["count(*)"]);
+  response.header("X-Itens-Per-Page", itensPerPage);
+  return response;
+};
+
+const update = async (req, h) => {
+  const { ongID, incidentID } = req.params;
+  const { credentials } = req.auth;
+
+  if (ongID !== credentials.data.ongID) {
+    return boom.forbidden("Você não poderá atualizar casos de outras ONGs");
+  }
+
+  const dados = req.payload;
+  delete dados.id;
+  delete dados.ong_id;
+
+  const [existingIncident] = await db("incidents")
+    .where("id", incidentID)
+    .select("*");
+
+  if (!existingIncident) {
+    return boom.preconditionFailed(
+      "Não foi possível encontrar um caso com o ID fornecido"
+    );
+  }
+  if (existingIncident.ong_id !== ongID) {
+    return boom.preconditionFailed("O incidente não pertence a esta ONG");
+  }
+
+  const newIncident = {
+    ...existingIncident,
+    ...dados,
+  };
+
+  await db("incidents")
+    .where({ id: incidentID })
+    .update({ ...newIncident });
+
+  const result = await db("incidents").where("id", incidentID).select("*");
+  return result;
+};
+
+const show = async (req, h) => {
+  const { ongID, incidentID } = req.params;
+  const { credentials } = req.auth;
+
+  if (ongID !== credentials.data.ongID) {
+    return boom.forbidden(
+      "Você não poderá obter os dados cadastrais de um caso de outra ONG"
+    );
+  }
+
+  const [existingIncident] = await db("incidents")
+    .join("ongs", "ongs.id", "=", "incidents.ong_id")
+    .where("incidents.id", incidentID)
+    .select([
+      "incidents.*",
+      "ongs.name",
+      "ongs.email",
+      "ongs.whatsapp",
+      "ongs.city",
+      "ongs.uf",
+    ]);
+
+  if (!existingIncident) {
+    return boom.preconditionFailed(
+      "Não foi possível encontrar um caso com o ID fornecido"
+    );
+  }
+  if (existingIncident.ong_id !== ongID) {
+    return boom.preconditionFailed("O incidente não pertence a esta ONG");
+  }
+
+  return existingIncident;
+};
+
 module.exports = {
   getAll,
   create,
+  index,
+  update,
+  show,
 };
