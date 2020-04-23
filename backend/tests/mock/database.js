@@ -35,6 +35,16 @@ class Database {
     // console.log("Arquivo depis", arquivo);
     this.setFile(arquivo);
   }
+
+  async includeInto(nome, dados) {
+    const arquivo = await this.getFromFile();
+    const original = arquivo[nome];
+    arquivo[nome] = {
+      original,
+      dados,
+    };
+    this.setFile(arquivo);
+  }
 }
 
 module.exports = Database;

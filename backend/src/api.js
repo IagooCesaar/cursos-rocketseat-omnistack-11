@@ -54,6 +54,8 @@ async function initiateCache() {
 }
 
 async function api() {
+  console.log("=> Ambiente de execução: " + env);
+
   console.log("=> Atualizando metadados do BD");
   await makeDB();
 

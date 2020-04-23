@@ -9,7 +9,7 @@ config({
   path: envPath,
 });
 
-describe("Suíte de testes Redis", function () {
+describe("### Suíte de testes Redis", function () {
   this.timeout(Infinity);
 
   // Redis.monitor();

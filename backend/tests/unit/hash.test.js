@@ -4,7 +4,7 @@ const hash = require("../../src/utils/hash");
 const MOCK_PALAVRA = "GERAR_HASH";
 let validHash = "";
 
-describe("## Testes de geração e validação de Hash", function () {
+describe("### Testes de geração e validação de Hash", function () {
   it("Deverá gerar um hash de uma string", async () => {
     validHash = await hash.make(MOCK_PALAVRA);
     assert.ok(

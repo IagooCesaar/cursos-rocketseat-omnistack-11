@@ -110,7 +110,6 @@ const deleteOne = async (req, h) => {
         "Não foi possível encontrar uma ONG com o ID fornecido "
       );
     }
-    console.log("Irá deletar ONG ID", id);
 
     await db("ongs").where({ id: id }).update({ active: false });
 

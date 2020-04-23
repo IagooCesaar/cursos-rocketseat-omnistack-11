@@ -5,7 +5,6 @@ const { ERR_REDIS_NOT_INITIALIZED } = require("../../utils/errorTypes");
 let redis = null;
 
 const connect = () => {
-  console.log("Conectando o Redis");
   redis = new Redis({
     port: process.env.REDIS_PORT,
     host: process.env.REDIS_HOST,

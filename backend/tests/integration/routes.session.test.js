@@ -10,7 +10,8 @@ const { decode } = require("../../src/auth/token.auth");
 let app = {};
 let ong = {};
 let token = "";
-describe.only("Suíte de testes da rota de sessão", function () {
+
+describe("## Suíte de testes da rota de sessão", function () {
   this.beforeAll(async () => {
     app = await api;
   });
@@ -48,6 +49,7 @@ describe.only("Suíte de testes da rota de sessão", function () {
     const dados = JSON.parse(result.payload);
     token = dados.token;
     OngsDB.setProp("token", token);
+    OngsDB.setProp("tokenFor", ong);
     decodedToken = await decode(token);
     assert.deepEqual(ong.id, decodedToken.payload.data.ongID);
   });
