@@ -49,10 +49,16 @@ const toShow = {
   params,
 };
 
+const toDelete = {
+  headers,
+  params,
+};
+
 module.exports = {
   toGetAll,
   toCreate,
   toIndex,
   toShow,
   toUpdate,
+  toDelete,
 };

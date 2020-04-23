@@ -96,6 +96,23 @@ class IncidentsRoutes extends BaseRoute {
       },
     };
   }
+
+  deleteOne() {
+    return {
+      method: "DELETE",
+      path: basePath + "/{incidentID}",
+      handler: incidentHandler.deleteOne,
+      options: {
+        tags: ["api", "incidents"],
+        description: "Desativar um caso",
+        notes: "Desativará o cadastro de um caso de uma determinada ONG",
+        validate: {
+          failAction,
+          ...incidentSchema.toDelete,
+        },
+      },
+    };
+  }
 }
 
 module.exports = IncidentsRoutes;

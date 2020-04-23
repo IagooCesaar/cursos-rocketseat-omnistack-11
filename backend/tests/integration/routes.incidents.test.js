@@ -332,4 +332,93 @@ describe.only("## Suíte de testes da rota de Casos", function () {
     const dados = JSON.parse(result.payload);
     assert.deepEqual(dados, expected);
   });
+
+  it("Deverá deletar/desativar o cadastro de um caso de uma determinada ONG", async () => {
+    const toCreate = {
+      title: `Caso ${Date.now()}`,
+      description: `Detalhes do caso ${Date.now()}`,
+      value: 100,
+    };
+
+    const result1 = await app.inject({
+      method: "POST",
+      url: `/ongs/${validOng.id}/incidents`,
+      headers,
+      payload: toCreate,
+    });
+    assert.deepEqual(result1.statusCode, 201);
+    const { incidentID } = JSON.parse(result1.payload);
+
+    const result2 = await app.inject({
+      method: "DELETE",
+      url: `/ongs/${validOng.id}/incidents/${incidentID}`,
+      headers,
+    });
+    const { message } = JSON.parse(result2.payload);
+    assert.deepEqual(
+      message,
+      "Não é permitido deleter casos. O registro foi desativado"
+    );
+  });
+
+  it("NÃO deverá deletar/desativar o cadastro de um caso de uma ONG diferente da autenticada", async () => {
+    const toCreate = {
+      title: `Caso ${Date.now()}`,
+      description: `Detalhes do caso ${Date.now()}`,
+      value: 100,
+    };
+
+    const result1 = await app.inject({
+      method: "POST",
+      url: `/ongs/${validOng.id}/incidents`,
+      headers,
+      payload: toCreate,
+    });
+    assert.deepEqual(result1.statusCode, 201);
+    const { incidentID } = JSON.parse(result1.payload);
+
+    const expected = {
+      error: "Forbidden",
+      message:
+        "Você não poderá obter os dados cadastrais de um caso de outra ONG",
+      statusCode: 403,
+    };
+    const result2 = await app.inject({
+      method: "DELETE",
+      url: `/ongs/${invalidOng.id}/incidents/${incidentID}`,
+      headers,
+    });
+    const dados = JSON.parse(result2.payload);
+    assert.deepEqual(dados, expected);
+  });
+
+  it("NÃO deverá deletar/desativar o cadastro de um caso inexistente", async () => {
+    const toCreate = {
+      title: `Caso ${Date.now()}`,
+      description: `Detalhes do caso ${Date.now()}`,
+      value: 100,
+    };
+
+    const result1 = await app.inject({
+      method: "POST",
+      url: `/ongs/${validOng.id}/incidents`,
+      headers,
+      payload: toCreate,
+    });
+    assert.deepEqual(result1.statusCode, 201);
+    const { incidentID } = JSON.parse(result1.payload);
+
+    const expected = {
+      error: "Precondition Failed",
+      message: "Não foi possível encontrar um caso com o ID fornecido",
+      statusCode: 412,
+    };
+    const result2 = await app.inject({
+      method: "DELETE",
+      url: `/ongs/${validOng.id}/incidents/${9999}`,
+      headers,
+    });
+    const dados = JSON.parse(result2.payload);
+    assert.deepEqual(dados, expected);
+  });
 });
