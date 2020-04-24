@@ -17,6 +17,7 @@
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "hapi-auth-jwt2": "^10.1.0",
+    "hapi-cors": "^1.0.3",
     "hapi-swagger": "^13.0.0",
     "ioredis": "^4.16.2",
     "jsonwebtoken": "^8.5.1",

@@ -13,6 +13,7 @@ config({
 const pkg = require("../package.json");
 
 const Hapi = require("@hapi/hapi");
+const HapiCors = require("hapi-cors");
 const Vision = require("@hapi/vision");
 const Inert = require("@hapi/inert");
 const HapiSwagger = require("hapi-swagger");
@@ -40,6 +41,13 @@ const hapiSwaggerPlugin = {
   },
 };
 
+const hapiCorsPlugin = {
+  plugin: HapiCors,
+  options: {
+    origins: ["*"],
+  },
+};
+
 const app = Hapi.Server({
   host: process.env.HOST,
   port: process.env.PORT,
@@ -63,7 +71,13 @@ async function api() {
   await initiateCache();
 
   console.log("=> Registrando plugins");
-  await app.register([HapiJwt, Vision, Inert, hapiSwaggerPlugin]);
+  await app.register([
+    HapiJwt,
+    Vision,
+    Inert,
+    hapiSwaggerPlugin,
+    hapiCorsPlugin,
+  ]);
 
   console.log(
     `=> Preparando ${strategies.length} estratégia(s) de autenticação da API`
