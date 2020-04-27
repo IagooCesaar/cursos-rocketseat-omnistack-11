@@ -6,42 +6,31 @@ import { FiArrowLeft } from "react-icons/fi";
 import logoImg from "../../assets/logo.svg";
 import "./styles.css";
 
+import useAuth from "../../contexts/auth";
 import api from "../../services/api";
 
 export default function NewIncident() {
-  const [ong, setOng] = useState({});
+  const { ong } = useAuth();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [value, setValue] = useState("");
   const history = useHistory();
 
-  //Dados da ONG logada
-  useEffect(() => {
-    // const loggedOng = authorizationData(history);
-    // setOng(loggedOng)
-  }, []);
-
   async function handleNewIncident(e) {
     e.preventDefault();
     try {
-      const response = await api.post(
-        "/incidents",
-        {
-          title,
-          description,
-          value,
-        },
-        {
-          headers: {
-            Authorization: ong.id,
-          },
-        }
-      );
+      const response = await api.post(`/ongs/${ong.id}/incidents`, {
+        title,
+        description,
+        value,
+      });
       if (response.data) {
         alert(`Novo caso cadastrado com sucesso (ID: ${response.data.id} )`);
         history.push("/profile");
       }
     } catch (err) {
+      console.log("Erro ao cadastrar novo caso");
+      console.error(err);
       alert("Erro ao cadastrar novo caso");
     }
   }

@@ -35,14 +35,16 @@ export default function Profile() {
   //Deletar determinado caso
   async function handleDeleteIncident(id) {
     try {
+      console.log("URL => ", `/ongs/${ong.id}/incidents/${id}`);
       const response = await api.delete(`/ongs/${ong.id}/incidents/${id}`);
-      console.log("Response", response);
 
       const filterIncidentes = incidents.filter(
         (incident) => incident.id !== id
       );
       setIncidents(filterIncidentes);
     } catch (err) {
+      console.log("Erro ao inativar caso");
+      console.error(err);
       alert("Falha ao deletar o caso selecionado");
     }
   }

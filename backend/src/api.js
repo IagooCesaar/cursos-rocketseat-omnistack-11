@@ -45,6 +45,11 @@ const hapiCorsPlugin = {
   plugin: HapiCors,
   options: {
     origins: ["*"],
+    allowCredentials: "true",
+    exposeHeaders: ["content-type", "content-length"],
+    maxAge: 600,
+    methods: ["*"],
+    headers: ["Accept", "Content-Type", "Authorization"],
   },
 };
 
