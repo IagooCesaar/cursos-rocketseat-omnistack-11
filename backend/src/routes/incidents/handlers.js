@@ -62,24 +62,46 @@ const index = async (req, h) => {
     return boom.forbidden("Você não poderá listar casos de outras ONGs");
   }
 
-  const { page = 1 } = req.query;
+  const { page = 1, onlyActive = true } = req.query;
   const itensPerPage = 5;
 
-  const [count] = await db("incidents").where("ong_id", ongID).count();
+  let count = 0;
+  let incidents = [];
+  if (onlyActive === true) {
+    [count] = await db("incidents")
+      .where({ ong_id: ongID, active: true })
+      .count();
 
-  const incidents = await db("incidents")
-    .join("ongs", "ongs.id", "=", "incidents.ong_id")
-    .where("ong_id", ongID)
-    .limit(itensPerPage)
-    .offset((page - 1) * itensPerPage)
-    .select([
-      "incidents.*",
-      "ongs.name",
-      "ongs.email",
-      "ongs.whatsapp",
-      "ongs.city",
-      "ongs.uf",
-    ]);
+    incidents = await db("incidents")
+      .join("ongs", "ongs.id", "=", "incidents.ong_id")
+      .where({ "incidents.ong_id": ongID, "incidents.active": true })
+      .limit(itensPerPage)
+      .offset((page - 1) * itensPerPage)
+      .select([
+        "incidents.*",
+        "ongs.name",
+        "ongs.email",
+        "ongs.whatsapp",
+        "ongs.city",
+        "ongs.uf",
+      ]);
+  } else {
+    [count] = await db("incidents").where({ ong_id: ongID }).count();
+
+    incidents = await db("incidents")
+      .join("ongs", "ongs.id", "=", "incidents.ong_id")
+      .where("ong_id", ongID)
+      .limit(itensPerPage)
+      .offset((page - 1) * itensPerPage)
+      .select([
+        "incidents.*",
+        "ongs.name",
+        "ongs.email",
+        "ongs.whatsapp",
+        "ongs.city",
+        "ongs.uf",
+      ]);
+  }
 
   const response = h.response(incidents);
   response.header("X-Total-Count", count["count(*)"]);

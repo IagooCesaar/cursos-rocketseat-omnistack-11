@@ -22,6 +22,12 @@ const toCreate = {
 
 const toIndex = {
   headers,
+  query: Joi.object({
+    email: Joi.string().email({
+      minDomainSegments: 2,
+      tlds: { allow: ["com", "net"] },
+    }),
+  }),
 };
 
 const toUpdate = {
@@ -52,6 +58,18 @@ const toShow = {
   }),
 };
 
+const toShowByEmail = {
+  headers,
+  params: Joi.object({
+    email: Joi.string()
+      .required()
+      .email({
+        minDomainSegments: 2,
+        tlds: { allow: ["com", "net"] },
+      }),
+  }),
+};
+
 const toDelete = {
   headers,
   params: Joi.object({
@@ -63,6 +81,7 @@ module.exports = {
   toCreate,
   toIndex,
   toShow,
+  // toShowByEmail,
   toUpdate,
   toDelete,
 };

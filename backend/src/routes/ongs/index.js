@@ -80,6 +80,24 @@ class OngsRoutes extends BaseRoute {
     };
   }
 
+  // showByEmail() {
+  //   return {
+  //     method: "GET",
+  //     path: basePath + "/{email}",
+  //     handler: ongHandler.show,
+  //     options: {
+  //       tags: ["api", "ongs"],
+  //       description: "Dados de determinada ONG",
+  //       notes:
+  //         "Retornará os dados cadastrais de uma ONG quando respeitado os parâmetros",
+  //       validate: {
+  //         failAction,
+  //         ...ongSchema.toShowByEmail,
+  //       },
+  //     },
+  //   };
+  // }
+
   delete() {
     return {
       method: "DELETE",

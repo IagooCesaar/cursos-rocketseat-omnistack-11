@@ -30,6 +30,7 @@ const toIndex = {
   params: param,
   query: Joi.object({
     page: Joi.number(),
+    onlyActive: Joi.boolean(),
   }),
 };
 

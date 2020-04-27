@@ -44,10 +44,21 @@ const create = async (req, h) => {
 };
 
 const index = async (req, h) => {
+  const { email } = req.query;
   try {
-    const ongs = await db("ongs")
-      .where("active", true)
-      .select("id", "name", "email", "whatsapp", "city", "uf", "active");
+    let ongs = [];
+    if (!email) {
+      ongs = await db("ongs")
+        .where("active", true)
+        .select("id", "name", "email", "whatsapp", "city", "uf", "active");
+    } else {
+      ongs = await db("ongs")
+        .where({
+          active: true,
+          email: email.toLowerCase(),
+        })
+        .select("id", "name", "email", "whatsapp", "city", "uf", "active");
+    }
 
     return ongs;
   } catch (error) {}
