@@ -61,7 +61,9 @@ form textarea {
   transition: filter 0.2s;
   transition: text-decoration 0.2s;
 }
-
+.button-secundary {
+  background: #666;
+}
 .button:hover {
   filter: brightness(90%);
 }

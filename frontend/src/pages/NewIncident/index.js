@@ -33,7 +33,7 @@ export default function NewIncident({ action = "insert", match }) {
         setTitle(incident.title);
         setDescription(incident.description);
         setValue(incident.value);
-        setActive(incident.active);
+        setActive(Boolean(incident.active));
       } catch (error) {
         console.error(error);
       }

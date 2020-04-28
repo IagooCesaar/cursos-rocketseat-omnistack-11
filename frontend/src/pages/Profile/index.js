@@ -64,7 +64,7 @@ export default function Profile() {
       <header>
         <img src={logoImg} alt="Be The Hero" />
         <span>Bem vinda, {ong.name || "Nome da ONG"} </span>
-        <Link to="/register/edit" className="button">
+        <Link to="/register/edit" className="button button-secundary">
           Editar o cadastro
         </Link>
         <Link to="/incidents/new" className="button">

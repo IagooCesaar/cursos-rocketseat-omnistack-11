@@ -21,7 +21,8 @@ const toCreate = {
   payload: Joi.object({
     title: Joi.string().required().min(5),
     description: Joi.string().required().min(10),
-    value: Joi.number().min(0),
+    value: Joi.number().required().min(0),
+    active: Joi.boolean(),
   }),
 };
 

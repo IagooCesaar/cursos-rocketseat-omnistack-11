@@ -21,8 +21,12 @@
 
 .profile-container header a {
   width: 260px;
-  margin-left: auto;
+  margin-left: 16px;
   margin-top: 0;
+}
+
+.profile-container header a:first-of-type {
+  margin-left: auto;
 }
 
 .profile-container header button {
