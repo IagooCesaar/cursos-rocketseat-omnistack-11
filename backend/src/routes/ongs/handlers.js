@@ -86,9 +86,11 @@ const update = async (req, h) => {
       const existingOngEmail = await repoOngs.findByEmail(dados.email);
       if (existingOngEmail.length > 0) {
         const diffOng = existingOngEmail.filter((ong) => ong.id !== id);
-        if (diffOng) {
+        if (diffOng.length > 0) {
           return boom.badRequest(
-            "Não será possível alterar o e-mail da ONG pois o mesmo está em uso por outra entidade"
+            `Não será possível alterar o e-mail da ONG pois o mesmo está em uso por outra entidade (${JSON.stringify(
+              diffOng
+            )})`
           );
         }
       }

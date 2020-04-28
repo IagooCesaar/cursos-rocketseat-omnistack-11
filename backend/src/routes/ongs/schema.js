@@ -25,7 +25,7 @@ const toIndex = {
   query: Joi.object({
     email: Joi.string().email({
       minDomainSegments: 2,
-      tlds: { allow: ["com", "net"] },
+      tlds: { allow: ["com", "net", "br"] },
     }),
   }),
 };
@@ -36,7 +36,7 @@ const toUpdate = {
     name: Joi.string(),
     email: Joi.string().email({
       minDomainSegments: 2,
-      tlds: { allow: ["com", "net"] },
+      tlds: { allow: ["com", "net", "br"] },
     }),
     password: Joi.string(),
     whatsapp: Joi.string().pattern(
@@ -65,7 +65,7 @@ const toShowByEmail = {
       .required()
       .email({
         minDomainSegments: 2,
-        tlds: { allow: ["com", "net"] },
+        tlds: { allow: ["com", "net", "br"] },
       }),
   }),
 };
