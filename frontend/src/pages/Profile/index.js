@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { FiPower, FiTrash2 } from "react-icons/fi";
+import { FiPower, FiTrash2, FiEdit2 } from "react-icons/fi";
 
 import logoImg from "../../assets/logo.svg";
 import "./styles.css";
@@ -9,7 +9,7 @@ import api from "../../services/api";
 import useAuth from "../../contexts/auth";
 
 export default function Profile() {
-  const { ong, logout } = useAuth();
+  const { ong, logout, authenticated } = useAuth();
 
   const [incidents, setIncidents] = useState([]);
   const history = useHistory();
@@ -25,6 +25,12 @@ export default function Profile() {
         );
         if (response.data) setIncidents(response.data);
       } catch (err) {
+        if (err.response) {
+          switch (err.response.status) {
+            case 401:
+              return (authenticated = false);
+          }
+        }
         alert("Falha ao obter a lista de casos. Tente atualizar a página");
         console.error(err);
       }
@@ -58,6 +64,9 @@ export default function Profile() {
       <header>
         <img src={logoImg} alt="Be The Hero" />
         <span>Bem vinda, {ong.name || "Nome da ONG"} </span>
+        <Link to="/register/edit" className="button">
+          Editar o cadastro
+        </Link>
         <Link to="/incidents/new" className="button">
           Cadastrar novo caso
         </Link>
@@ -84,8 +93,12 @@ export default function Profile() {
                 }).format(incident.value)}
               </p>
 
+              <Link to={`/incidents/edit/${incident.id}`} className="edit">
+                <FiEdit2 size={20} color="#a8a8b3" />
+              </Link>
               <button
                 type="button"
+                className="delete"
                 onClick={() => handleDeleteIncident(incident.id)}
               >
                 <FiTrash2 size={20} color="#a8a8b3" />

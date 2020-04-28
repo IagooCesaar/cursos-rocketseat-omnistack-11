@@ -9,23 +9,55 @@ import "./styles.css";
 import useAuth from "../../contexts/auth";
 import api from "../../services/api";
 
-export default function NewIncident() {
+export default function NewIncident({ action = "insert", match }) {
   const { ong } = useAuth();
+  const [incidentId, setIncidentId] = useState(0);
+  const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [value, setValue] = useState("");
+  const [active, setActive] = useState(true);
   const history = useHistory();
+
+  useEffect(() => {
+    const id = match.params.incident_id || 0;
+    if (action === "edit") {
+      setEditing(true);
+      setIncidentId(match.params.incident_id);
+    }
+    async function getIncidentData() {
+      try {
+        const response = await api.get(`/ongs/${ong.id}/incidents/${id}`);
+        const incident = response.data;
+        console.log("Incident", incident);
+        setTitle(incident.title);
+        setDescription(incident.description);
+        setValue(incident.value);
+        setActive(incident.active);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    if (id > 0) getIncidentData();
+  }, []);
 
   async function handleNewIncident(e) {
     e.preventDefault();
     try {
-      const response = await api.post(`/ongs/${ong.id}/incidents`, {
-        title,
-        description,
-        value,
-      });
+      const config = {
+        method: editing ? "patch" : "post",
+        url: editing
+          ? `/ongs/${ong.id}/incidents/${incidentId}`
+          : `/ongs/${ong.id}/incidents`,
+        data: {
+          title,
+          description,
+          value,
+          active,
+        },
+      };
+      const response = await api(config);
       if (response.data) {
-        alert(`Novo caso cadastrado com sucesso (ID: ${response.data.id} )`);
         history.push("/profile");
       }
     } catch (err) {
@@ -40,11 +72,23 @@ export default function NewIncident() {
       <div className="content">
         <section>
           <img src={logoImg} alt="Be The Hero" />
-          <h1>Cadastre o novo caso</h1>
-          <p>
-            Descreva o caso detalhadamente para encontrar um herói para
-            resolvê-lo
-          </p>
+          {editing ? (
+            <>
+              <h1>Atualize o cadastro do caso</h1>
+              <p>
+                Descreva o caso detalhadamente para encontrar um herói para
+                resolvê-lo
+              </p>
+            </>
+          ) : (
+            <>
+              <h1>Cadastre o novo caso</h1>
+              <p>
+                Descreva o caso detalhadamente para encontrar um herói para
+                resolvê-lo
+              </p>
+            </>
+          )}
 
           <Link className="back-link" to="/profile">
             <FiArrowLeft size={16} color="#e02041" />
@@ -70,9 +114,18 @@ export default function NewIncident() {
             value={value}
             onChange={(e) => setValue(e.target.value)}
           />
+          <div>
+            <input
+              type="checkbox"
+              id="active"
+              checked={active}
+              onChange={() => setActive(!active)}
+            />
+            <label for="active">O caso está ativo</label>
+          </div>
 
           <button className="button" type="submit">
-            Cadastrar
+            {editing ? "Atualizar" : "Cadastrar"}
           </button>
         </form>
       </div>

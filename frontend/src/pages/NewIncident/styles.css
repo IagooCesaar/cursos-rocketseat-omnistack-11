@@ -3,7 +3,7 @@
   max-width: 1120px;
   height: 100vh;
   margin: 0 auto;
-  
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -33,15 +33,28 @@
 .new-incident-container .content section p {
   font-size: 18px;
   color: #737380;
-  line-height: 32px;  
+  line-height: 32px;
 }
 
 .new-incident-container .content form {
   width: 100%;
-  max-width: 450px;  
+  max-width: 450px;
 }
 
 .new-incident-container .content form input,
 .new-incident-container .content form textarea {
   margin-top: 8px;
+}
+
+.new-incident-container .content form div {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  align-items: center;
+  font-size: 18px;
+}
+.new-incident-container .content form div label {
+}
+.new-incident-container .content form div input {
+  height: 40px;
 }

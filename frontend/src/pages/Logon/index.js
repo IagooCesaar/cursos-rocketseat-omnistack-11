@@ -22,7 +22,7 @@ export default function Logon() {
   async function handleLogin(e) {
     e.preventDefault();
     console.log("useAuth login");
-    await login(email, password);
+    const result = await login(email, password);
   }
 
   return (
@@ -34,6 +34,7 @@ export default function Logon() {
 
           <input
             type="email"
+            id="email"
             placeholder="E-mail cadastrado"
             required
             value={email}
@@ -41,6 +42,7 @@ export default function Logon() {
           />
           <input
             type="password"
+            id="password"
             placeholder="Sua senha"
             required
             value={password}

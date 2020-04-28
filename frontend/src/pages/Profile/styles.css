@@ -1,6 +1,6 @@
 .profile-container {
   width: 100%;
-  max-width: 1180px;    
+  max-width: 1180px;
   padding: 0 30px;
   margin: 32px auto;
 }
@@ -16,7 +16,7 @@
 }
 
 .profile-container header img {
-  height: 64px;  
+  height: 64px;
 }
 
 .profile-container header a {
@@ -58,7 +58,7 @@
   position: relative;
 }
 
-.profile-container ul li button {
+.profile-container ul li .edit {
   position: absolute;
   right: 24px;
   top: 24px;
@@ -67,10 +67,19 @@
   background: transparent;
 }
 
+.profile-container ul li .delete {
+  position: absolute;
+  right: 24px;
+  top: 60px;
+  border: 0;
+  transition: opacity 0.2s;
+  background: transparent;
+}
+
 .profile-container ul li strong {
   display: block;
   margin-bottom: 16px;
-  color: #41414d;   
+  color: #41414d;
 }
 
 .profile-container ul li p + strong {
@@ -83,7 +92,6 @@
   font-size: 16px;
 }
 
-.profile-container ul li button:hover{
+.profile-container ul li button:hover {
   opacity: 0.8;
 }
-

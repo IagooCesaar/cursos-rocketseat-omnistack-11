@@ -22,11 +22,17 @@ const setLoginData = (token, ong) => {
 const AuthContextData = {
   authenticated: false,
   ong: null,
+  updateOng: (newOng) => {
+    console.log("Default update ong");
+    return false;
+  },
   login: (email, password) => {
     console.log("Default login");
+    return false;
   },
   logout: () => {
     console.log("Default logout");
+    return false;
   },
   loading: true,
 };
@@ -102,6 +108,20 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.log("Erro ao autenticar-se");
       console.error(err.message);
+      if (err.response) {
+        console.log("Error Status Code => " + err.response.status);
+        switch (err.response.status) {
+          case 400:
+            return alert(err.response.data.message);
+          case 422:
+            return alert(err.response.data.message);
+        }
+      } else if (err.request) {
+        console.log("Error Request =>", err.request);
+      } else {
+        alert(err.message);
+      }
+      return false;
     }
     try {
       const response = await api.get(`/ongs?email=${email}`);
@@ -110,10 +130,12 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.log("Erro ao obter dados da ONG autenticada");
       console.error(err.message);
+      return false;
     }
     setLoading(false);
     setAuthenticated(true);
     setLoginData(token, ongData);
+    return true;
   }
 
   async function logout() {
@@ -123,10 +145,16 @@ export const AuthProvider = ({ children }) => {
       removeLoginData();
       setAuthenticated(false);
       setOng(null);
+      return true;
     } catch (err) {
       console.log("Falha ao realizar logout");
       console.error(err.message);
+      return false;
     }
+  }
+
+  function updateOng(newOng) {
+    setOng(newOng);
   }
 
   return (
@@ -134,6 +162,7 @@ export const AuthProvider = ({ children }) => {
       value={{
         authenticated,
         ong,
+        updateOng,
         login,
         logout,
         loading,

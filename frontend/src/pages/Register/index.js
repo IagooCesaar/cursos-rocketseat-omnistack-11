@@ -6,8 +6,10 @@ import logoImg from "../../assets/logo.svg";
 import "./styles.css";
 
 import api from "../../services/api";
+import useAuth from "../../contexts/auth";
 
-export default function Register() {
+export default function Register({ action = "insert" }) {
+  const [editing, setEditing] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,6 +18,18 @@ export default function Register() {
   const [uf, setUf] = useState("");
 
   const history = useHistory();
+  const { ong, updateOng } = useAuth();
+
+  useEffect(() => {
+    if (action === "edit") {
+      setEditing(true);
+      setName(ong.name);
+      setEmail(ong.email);
+      setWhatsApp(ong.whatsapp);
+      setCity(ong.city);
+      setUf(ong.uf);
+    }
+  }, []);
 
   async function handleRegister(e) {
     e.preventDefault();
@@ -27,14 +41,24 @@ export default function Register() {
       city,
       uf,
     };
+    let newOng = {};
     try {
-      const response = await api.post("/ongs", data);
+      const options = {
+        method: editing ? "patch" : "post",
+        url: editing ? `/ongs/${ong.id}` : "/ongs",
+        data,
+      };
+      // const response = await api.post("/ongs", data);
+      const response = await api(options);
       if (!response) return alert("Não foi possível concluir o seu cadastro");
-      alert(`Seu ID de acesso: ${response.data.ong_id}`);
+      newOng = response.data[0];
+      console.table(newOng);
       history.push("/");
     } catch (err) {
       alert("Falha ao tentar realizar o cadastro");
+      console.error(err);
     }
+    if (editing) updateOng(newOng);
   }
 
   return (
@@ -42,11 +66,22 @@ export default function Register() {
       <div className="content">
         <section>
           <img src={logoImg} alt="Be The Hero" />
-          <h1>Cadastre sua ONG</h1>
-          <p>
-            Faça seu cadastro, entre na plataforma e ajude pessoas a encontrarem
-            ajuda para os casos de suas ONGs.
-          </p>
+          {!editing ? (
+            <>
+              <h1>Cadastre sua ONG</h1>
+              <p>
+                Faça seu cadastro, entre na plataforma e ajude pessoas a
+                encontrarem ajuda para os casos de suas ONGs.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1>Edite o cadastro de sua ONG</h1>
+              <p>
+                Altere os dados desejados para atualizar o cadastro de sua ONG
+              </p>
+            </>
+          )}
 
           <Link className="back-link" to="/">
             <FiArrowLeft size={16} color="#e02041" />
@@ -96,7 +131,7 @@ export default function Register() {
             />
           </div>
           <button className="button" type="submit">
-            Cadastrar
+            {editing ? "Atualizar" : "Cadastrar"}
           </button>
         </form>
       </div>
