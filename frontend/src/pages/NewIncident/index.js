@@ -121,7 +121,7 @@ export default function NewIncident({ action = "insert", match }) {
               checked={active}
               onChange={() => setActive(!active)}
             />
-            <label for="active">O caso está ativo</label>
+            <label htmlFor="active">O caso está ativo</label>
           </div>
 
           <button className="button" type="submit">
