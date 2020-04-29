@@ -51,6 +51,7 @@ class OngsRoutes extends BaseRoute {
       path: basePath,
       handler: ongHandler.index,
       options: {
+        auth: false,
         tags: ["api", "ongs"],
         description: "Lista de ONGs",
         notes: "Retornará uma lista de todas as ONGs cadastradas",
