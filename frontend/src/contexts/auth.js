@@ -21,6 +21,10 @@ const setLoginData = (token, ong) => {
 
 const AuthContextData = {
   authenticated: false,
+  unauthorized: () => {
+    console.log("Default unauthorized");
+    return false;
+  },
   ong: null,
   updateOng: (newOng) => {
     console.log("Default update ong");
@@ -157,10 +161,15 @@ export const AuthProvider = ({ children }) => {
     setOng(newOng);
   }
 
+  function unauthorized() {
+    setAuthenticated(false);
+  }
+
   return (
     <AuthContext.Provider
       value={{
         authenticated,
+        unauthorized,
         ong,
         updateOng,
         login,

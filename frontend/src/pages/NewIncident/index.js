@@ -10,7 +10,7 @@ import useAuth from "../../contexts/auth";
 import api from "../../services/api";
 
 export default function NewIncident({ action = "insert", match }) {
-  const { ong } = useAuth();
+  const { ong, unauthorized } = useAuth();
   const [incidentId, setIncidentId] = useState(0);
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState("");
@@ -35,7 +35,25 @@ export default function NewIncident({ action = "insert", match }) {
         setValue(incident.value);
         setActive(Boolean(incident.active));
       } catch (error) {
-        console.error(error);
+        console.log("Erro:: " + error);
+        if (error.response) {
+          switch (error.response.status) {
+            case 400:
+              return alert(
+                error.response.data.error + ": " + error.response.data.message
+              );
+            case 422:
+              return alert(
+                error.response.data.error + ": " + error.response.data.message
+              );
+            case 401:
+              alert(
+                error.response.data.error + ": " + error.response.data.message
+              );
+              unauthorized();
+              return;
+          }
+        }
       }
     }
     if (id > 0) getIncidentData();
@@ -60,10 +78,26 @@ export default function NewIncident({ action = "insert", match }) {
       if (response.data) {
         history.push("/profile");
       }
-    } catch (err) {
-      console.log("Erro ao cadastrar novo caso");
-      console.error(err);
-      alert("Erro ao cadastrar novo caso");
+    } catch (error) {
+      if (error.response) {
+        console.log("Error response :: ", error.response.data);
+        switch (error.response.status) {
+          case 400:
+            return alert(
+              error.response.data.error + ": " + error.response.data.message
+            );
+          case 422:
+            return alert(
+              error.response.data.error + ": " + error.response.data.message
+            );
+          case 401:
+            alert(
+              error.response.data.error + ": " + error.response.data.message
+            );
+            unauthorized();
+            return;
+        }
+      }
     }
   }
 
