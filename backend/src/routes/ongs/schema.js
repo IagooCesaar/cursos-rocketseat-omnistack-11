@@ -9,7 +9,7 @@ const toCreate = {
       .required()
       .email({
         minDomainSegments: 2,
-        tlds: { allow: ["com", "net"] },
+        tlds: { allow: ["com", "net", "br"] },
       }),
     password: Joi.string().required(),
     whatsapp: Joi.string()

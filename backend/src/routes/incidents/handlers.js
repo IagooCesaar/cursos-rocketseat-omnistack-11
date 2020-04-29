@@ -12,7 +12,7 @@ const getAll = async (req, h) => {
   const { page = 1 } = req.query;
   const itensPerPage = 5;
 
-  const [count] = await db("incidents").count();
+  const [count] = await db("incidents").where("incidents.active", true).count();
 
   const incidents = await db("incidents")
     .join("ongs", "ongs.id", "=", "incidents.ong_id")
