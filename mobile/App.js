@@ -1,12 +1,18 @@
-import 'intl';
-import 'intl/locale-data/jsonp/pt-BR';
+import "intl";
+import "intl/locale-data/jsonp/pt-BR";
 
-import React from 'react';
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
 
-import Routes from './src/routes';
+import { AuthProvider } from "./src/contexts/auth";
+import Routes from "./src/routes";
 
 export default function App() {
   return (
-    <Routes />
+    <NavigationContainer>
+      <AuthProvider>
+        <Routes />
+      </AuthProvider>
+    </NavigationContainer>
   );
 }
