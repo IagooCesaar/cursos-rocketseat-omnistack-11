@@ -68,7 +68,7 @@ export default function Incidents() {
           Total de <Text style={styles.headerTextBold}>{total} casos</Text>.
         </Text>
         <TouchableOpacity onPress={handleLogout}>
-          <Text style={styles.headerText}>Sair</Text>
+          <Feather name="power" size={16} color="#e02041" />
         </TouchableOpacity>
       </View>
 
