@@ -22,11 +22,14 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
 
-  async function handleLogin() {
+  function handleLogin() {
     login(email, password);
   }
-  async function handleBack() {
+  function handleBack() {
     navigation.goBack();
+  }
+  function handleRegister() {
+    navigation.navigate("Register", {});
   }
 
   return (
@@ -50,6 +53,7 @@ export default function Login() {
               autoCompleteType="email"
               autoCorrect={false}
               keyboardType="email-address"
+              returnKeyType="next"
             />
             <TextInput
               style={styles.input}
@@ -60,11 +64,15 @@ export default function Login() {
               secureTextEntry={true}
               autoCorrect={false}
               keyboardType="default"
+              returnKeyType="go"
             />
             <TouchableOpacity style={styles.action} onPress={handleLogin}>
               <Text style={styles.actionText}>Entrar</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.actionLink}>
+            <TouchableOpacity
+              style={styles.actionLink}
+              onPress={handleRegister}
+            >
               <Feather name="log-in" size={28} color="#e82041" />
               <Text style={styles.actionLinkText}>Não tenho cadastro</Text>
             </TouchableOpacity>

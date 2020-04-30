@@ -70,6 +70,7 @@ export const AuthProvider = ({ children }) => {
       const loginData = await getLoginData();
       if (!loginData) {
         console.log("#Auth -> Não há dados de login");
+        setLoading(false);
         return false;
       }
       console.log("#Auth -> Login data", loginData);
@@ -105,6 +106,7 @@ export const AuthProvider = ({ children }) => {
       }
     }
     isAuthenticated();
+    setLoading(false);
   }, []);
 
   async function login(email, password) {
