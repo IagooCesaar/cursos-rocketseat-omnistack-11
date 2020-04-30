@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, FlatList, Text, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  FlatList,
+  Text,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 
@@ -10,7 +17,7 @@ import logoImg from "../../assets/logo.png";
 import styles from "./styles";
 
 export default function Incidents() {
-  const { logout, authenticated } = useAuth();
+  const { logout, authenticated, ong } = useAuth();
   const [incidents, setIncidents] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -30,12 +37,14 @@ export default function Incidents() {
 
     setLoading(true);
     try {
-      console.log("Buscando casos, página " + page);
-      const response = await api.get("/incidents", {
+      const options = {
+        method: "GET",
+        url: authenticated ? `ongs/${ong.id}/incidents` : "/incidents",
         params: {
           page,
         },
-      });
+      };
+      const response = await api(options);
       if (response.data) setIncidents([...incidents, ...response.data]);
 
       if ((response.headers["x-total-count"] || 0) !== total) {
@@ -43,6 +52,8 @@ export default function Incidents() {
       }
     } catch (err) {
       console.log("erro ao buscar incidentes", err);
+      console.log("erro ao buscar incidentes", err.response.data.message);
+      Alert.alert("Falha ao buscar casos", err.message);
     }
 
     setLoading(false);
@@ -71,11 +82,19 @@ export default function Incidents() {
           <Feather name="power" size={16} color="#e02041" />
         </TouchableOpacity>
       </View>
-
-      <Text style={styles.title}>Bem-vindo!</Text>
-      <Text style={styles.description}>
-        Escolha um dos casos abaixo e salve o dia.
-      </Text>
+      {authenticated ? (
+        <>
+          <Text style={styles.title}>Bem vinda, {ong.name}</Text>
+          <Text style={styles.description}>Casos cadastrados e ativos</Text>
+        </>
+      ) : (
+        <>
+          <Text style={styles.title}>Bem-vindo!</Text>
+          <Text style={styles.description}>
+            Escolha um dos casos abaixo e salve o dia.
+          </Text>
+        </>
+      )}
       {incidents && (
         <FlatList
           style={styles.incidentList}

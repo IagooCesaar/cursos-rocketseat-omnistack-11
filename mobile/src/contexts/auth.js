@@ -22,8 +22,14 @@ const setLoginData = async (anonimous, token, ong) => {
   );
 };
 
-const removeLoginData = async () =>
-  await AsyncStorage.removeItem(localStorageItem);
+const removeLoginData = () =>
+  AsyncStorage.removeItem(localStorageItem)
+    .then(() => {
+      console.log("O item foi apagado do localStorage");
+    })
+    .catch((err) => {
+      console.log("Erro ao apagar item do LocalStorage: ", err);
+    });
 
 const AuthContextData = {
   logged: false,
@@ -84,19 +90,20 @@ export const AuthProvider = ({ children }) => {
         removeLoginData();
         return false;
       }
+      console.log("Token recuperado", loginData.token);
       try {
         const response = await api.get(`/ongs/${loginData.ong.id}`, {
           headers: {
             authorization: loginData.token,
           },
         });
+        api.defaults.headers.authorization = `Bearer ${loginData.token}`;
+        console.log("#Auth -> O token é válido");
 
         setOng(loginData.ong);
         setAuthenticated(true);
         setLogged(true);
         setLoading(false);
-        api.defaults.headers.authorization = `Bearer ${loginData.token}`;
-        console.log("#Auth -> O token é válido");
         return true;
       } catch (err) {
         console.log("#Auth -> Falha ao validar o Token na API");
@@ -119,6 +126,7 @@ export const AuthProvider = ({ children }) => {
         password,
       });
       token = response.data.token;
+      console.log("token gerado", token);
       api.defaults.headers.authorization = `Bearer ${token}`;
     } catch (err) {
       console.log("Erro ao autenticar-se");
@@ -160,20 +168,39 @@ export const AuthProvider = ({ children }) => {
   }
 
   async function logout() {
-    setLoading(false);
-    setAuthenticated(false);
-    setLogged(false);
-    removeLoginData();
+    if (authenticated) {
+      try {
+        console.log("Tentativa de logout");
+        const response = await api.post("/logout");
+        removeLoginData();
+        setAuthenticated(false);
+        setOng(null);
+        setLogged(false);
+      } catch (err) {
+        console.log("Falha ao realizar logout");
+        Alert.alert("Falha ao realizar logout", err.message);
+      }
+    } else {
+      removeLoginData();
+      setAuthenticated(false);
+      setOng(null);
+      setLogged(false);
+    }
   }
+
+  async function unauthorized() {}
 
   return (
     <AuthContext.Provider
       value={{
         logged,
         authenticated,
+        unauthorized,
+        ong,
         anonimousAccess,
         login,
         logout,
+        loading,
       }}
     >
       {children}
