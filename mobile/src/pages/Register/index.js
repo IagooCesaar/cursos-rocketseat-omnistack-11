@@ -13,12 +13,14 @@ import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 
 import api from "../../services/api";
+import useAuth from "../../contexts/auth";
 
 import styles from "./styles";
 import logo from "../../assets/logo.png";
 
 export default function Register() {
   const navigation = useNavigation();
+  const { unauthorized } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -50,6 +52,7 @@ export default function Register() {
       navigation.goBack();
     } catch (error) {
       Alert.alert("Falha ao cadastrar ONG", error.message);
+      if (err?.response?.status === 401) unauthorized();
     }
   }
   return (

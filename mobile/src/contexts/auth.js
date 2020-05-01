@@ -79,7 +79,6 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
         return false;
       }
-      console.log("#Auth -> Login data", loginData);
       if (loginData.anonimous) {
         console.log("#Auth -> Acesso anônimo");
         anonimousAccess();
@@ -107,7 +106,6 @@ export const AuthProvider = ({ children }) => {
         return true;
       } catch (err) {
         console.log("#Auth -> Falha ao validar o Token na API");
-        console.error(err);
         setLoading(false);
         return false;
       }
@@ -154,7 +152,6 @@ export const AuthProvider = ({ children }) => {
       setLoginData(false, token, ongData);
     } catch (err) {
       console.log("Erro ao obter dados da ONG autenticada");
-      console.error(err.message);
       return false;
     }
     setLoading(false);
@@ -179,6 +176,7 @@ export const AuthProvider = ({ children }) => {
       } catch (err) {
         console.log("Falha ao realizar logout");
         Alert.alert("Falha ao realizar logout", err.message);
+        if (err?.response?.status === 401) unauthorized();
       }
     } else {
       removeLoginData();

@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 
 import useAuth from "../../contexts/auth";
@@ -17,13 +17,43 @@ import logoImg from "../../assets/logo.png";
 import styles from "./styles";
 
 export default function Incidents() {
-  const { logout, authenticated, ong } = useAuth();
+  const { logout, authenticated, ong, unauthorized } = useAuth();
+  const route = useRoute();
+
   const [incidents, setIncidents] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    loadIncidents();
+  }, []);
+
+  useEffect(() => {
+    if (route.params?.newIncident) {
+      editIncidentList(route.params.newIncident, route.params.editing);
+    }
+  }, [route.params?.newIncident]);
+
+  function editIncidentList(newIncident, editing) {
+    if (newIncident) {
+      if (incidents) {
+        if (editing) {
+          const alteredIncident = incidents.map((incident) => {
+            if (incident.id === newIncident.id) {
+              incident = newIncident;
+            }
+            return incident;
+          });
+          setIncidents(alteredIncident);
+        } else {
+          setIncidents([...incidents, newIncident]);
+        }
+      } else setIncidents(newIncident);
+    }
+  }
 
   async function loadIncidents() {
     if (loading) {
@@ -54,6 +84,7 @@ export default function Incidents() {
       console.log("erro ao buscar incidentes", err);
       console.log("erro ao buscar incidentes", err.response.data.message);
       Alert.alert("Falha ao buscar casos", err.message);
+      if (err?.response?.status === 401) unauthorized();
     }
 
     setLoading(false);
@@ -64,13 +95,10 @@ export default function Incidents() {
     logout();
   }
 
-  useEffect(() => {
-    loadIncidents();
-  }, []);
-
-  function navigateToDetail(incident) {
-    navigation.navigate("Detail", { incident });
+  function navigateToDetail(incident, editing = false) {
+    navigation.navigate("Detail", { incident, editing });
   }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -105,31 +133,68 @@ export default function Incidents() {
           keyExtractor={(incident) => String(incident.id)}
           renderItem={({ item: incident }) => (
             <View style={styles.incident}>
-              <Text style={styles.incidentProperty}>ONG:</Text>
-              <Text style={styles.incidentValue}>{incident.name}</Text>
+              {!authenticated ? (
+                <>
+                  <Text style={styles.incidentProperty}>ONG:</Text>
+                  <Text style={styles.incidentValue}>{incident.name}</Text>
+                </>
+              ) : (
+                <></>
+              )}
 
               <Text style={styles.incidentProperty}>Caso:</Text>
               <Text style={styles.incidentValue}>{incident.title}</Text>
 
-              <Text style={styles.incidentProperty}>VALOR:</Text>
+              <Text style={styles.incidentProperty}>Valor:</Text>
               <Text style={styles.incidentValue}>
                 {Intl.NumberFormat("pt-BR", {
                   style: "currency",
                   currency: "BRL",
                 }).format(incident.value)}
               </Text>
-
-              <TouchableOpacity
-                style={styles.detailsButton}
-                onPress={() => navigateToDetail(incident)}
-              >
-                <Text style={styles.detailsButtonText}>Ver mais detalhes</Text>
-                <Feather name="arrow-right" size={16} color="#e02041" />
-              </TouchableOpacity>
+              {authenticated ? (
+                <View style={styles.actions}>
+                  <TouchableOpacity
+                    style={styles.action}
+                    onPress={() => navigateToDetail(incident, true)}
+                  >
+                    <Feather name="edit-2" size={16} color="#e02041" />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.action}
+                    onPress={() => navigateToDetail(incident)}
+                  >
+                    <Feather name="trash-2" size={16} color="#e02041" />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  style={styles.detailsButton}
+                  onPress={() => navigateToDetail(incident)}
+                >
+                  <Text style={styles.detailsButtonText}>
+                    Ver mais detalhes
+                  </Text>
+                  <Feather name="arrow-right" size={16} color="#e02041" />
+                </TouchableOpacity>
+              )}
             </View>
           )}
         />
       )}
+      {authenticated ? (
+        <FloatingButton onPress={() => navigateToDetail(null, false)} />
+      ) : (
+        <></>
+      )}
     </View>
   );
 }
+
+const FloatingButton = ({ onPress }) => {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.floatingButton}>
+      <Feather name="plus-circle" size={50} color="#e02041" />
+    </TouchableOpacity>
+  );
+};
