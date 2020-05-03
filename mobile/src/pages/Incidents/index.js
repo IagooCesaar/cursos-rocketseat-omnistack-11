@@ -95,6 +95,23 @@ export default function Incidents() {
     logout();
   }
 
+  async function handleDelete(id) {
+    try {
+      console.log("Tentativa de deletar caso");
+      const response = await api.delete(`/ongs/${ong.id}/incidents/${id}`);
+
+      const filterIncidentes = incidents.filter(
+        (incident) => incident.id !== id
+      );
+      setIncidents(filterIncidentes);
+    } catch (err) {
+      console.log("erro ao buscar incidentes", err);
+      console.log("erro ao buscar incidentes", err.response.data.message);
+      Alert.alert("Falha ao buscar casos", err.message);
+      if (err?.response?.status === 401) unauthorized();
+    }
+  }
+
   function navigateToDetail(incident, editing = false) {
     navigation.navigate("Detail", { incident, editing });
   }
@@ -162,7 +179,7 @@ export default function Incidents() {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.action}
-                    onPress={() => navigateToDetail(incident)}
+                    onPress={() => handleDelete(incident.id)}
                   >
                     <Feather name="trash-2" size={16} color="#e02041" />
                   </TouchableOpacity>
