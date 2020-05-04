@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
 import { AsyncStorage, Alert } from "react-native";
-import { SplashScreen } from "expo";
 
 import api from "../services/api";
 
@@ -67,10 +66,6 @@ export const AuthProvider = ({ children }) => {
   const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
-    if (!loading) SplashScreen.hide();
-  }, [loading]);
-
-  useEffect(() => {
     async function isAuthenticated() {
       console.log("#Auth -> Verificando autenticação");
       const loginData = await getLoginData();
@@ -111,7 +106,6 @@ export const AuthProvider = ({ children }) => {
       }
     }
     isAuthenticated();
-    setLoading(false);
   }, []);
 
   async function login(email, password) {
@@ -157,7 +151,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }
 
-  async function anonimousAccess() {
+  function anonimousAccess() {
     setLoading(false);
     setAuthenticated(false);
     setLogged(true);
@@ -179,14 +173,16 @@ export const AuthProvider = ({ children }) => {
         if (err?.response?.status === 401) unauthorized();
       }
     } else {
-      removeLoginData();
-      setAuthenticated(false);
-      setOng(null);
-      setLogged(false);
+      unauthorized();
     }
   }
 
-  async function unauthorized() {}
+  async function unauthorized() {
+    removeLoginData();
+    setAuthenticated(false);
+    setOng(null);
+    setLogged(false);
+  }
 
   return (
     <AuthContext.Provider
