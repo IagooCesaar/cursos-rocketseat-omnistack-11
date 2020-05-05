@@ -59,7 +59,7 @@ export default function Detail() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Image source={logoImg} />
-        <TouchableOpacity onPress={navigateBack}>
+        <TouchableOpacity onPress={() => navigateBack()}>
           <Feather name="arrow-left" size={28} color="#e82041" />
         </TouchableOpacity>
       </View>
@@ -160,7 +160,6 @@ const EditBox = ({ incident, editing, handleNavigateBack }) => {
         ...incident,
         ...data,
       };
-
       handleNavigateBack(newIncident, editing);
     } catch (error) {
       console.log(error);
