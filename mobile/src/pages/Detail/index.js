@@ -125,7 +125,7 @@ const ViewBoxData = ({ incident }) => (
 );
 
 const EditBox = ({ incident, editing, handleNavigateBack }) => {
-  const { ong, authenticated, unauthorized } = useAuth();
+  const { ong, unauthorized } = useAuth();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [value, setValue] = useState("0");

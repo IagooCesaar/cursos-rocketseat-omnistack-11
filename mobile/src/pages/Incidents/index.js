@@ -114,6 +114,13 @@ export default function Incidents() {
 
   function navigateToDetail(incident, editing = false) {
     navigation.navigate("Detail", { incident, editing });
+    // navigation.navigate("Detail", {
+    //   incident,
+    //   editing,
+    //   onGoBack: (newIncident) => {
+    //     editIncidentList(newIncident, editing);
+    //   },
+    // });
   }
 
   return (
