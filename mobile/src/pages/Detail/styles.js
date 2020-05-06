@@ -110,7 +110,7 @@ export default StyleSheet.create({
   },
 
   input: {
-    height: 46,
+    minHeight: 46,
     backgroundColor: "#fff",
     borderWidth: 1,
     borderColor: "#f0f0f0",

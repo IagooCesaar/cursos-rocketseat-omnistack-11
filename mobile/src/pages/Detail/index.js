@@ -198,7 +198,7 @@ const EditBox = ({ incident, editing, handleNavigateBack }) => {
           autoCorrect={true}
           returnKeyType="next"
           multiline={true}
-          numberOfLines={100}
+          numberOfLines={6}
           textAlignVertical="top"
         />
         <TextInput
