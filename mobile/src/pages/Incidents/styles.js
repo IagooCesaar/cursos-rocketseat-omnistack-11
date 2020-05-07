@@ -88,11 +88,23 @@ export default StyleSheet.create({
 
   floatingButton: {
     position: "absolute",
-    width: 50,
-    height: 50,
+    width: 60,
+    height: 60,
     alignItems: "center",
     justifyContent: "center",
     right: 30,
     bottom: 30,
+
+    borderRadius: 30,
+    backgroundColor: "#fff",
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 12,
+    },
+    shadowOpacity: 0.58,
+    shadowRadius: 16.0,
+    elevation: 24,
   },
 });
