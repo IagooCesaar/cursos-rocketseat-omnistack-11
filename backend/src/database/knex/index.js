@@ -22,6 +22,7 @@ const getConfig = () => {
   }
 };
 getConfig();
+console.log("Knex config to env ", process.env.NODE_ENV, config);
 
 const connection = knex(config);
 

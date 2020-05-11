@@ -43,14 +43,15 @@ module.exports = {
     client: "postgresql",
     connection: {
       database: "omnistack11-prod",
-      user: "username",
-      password: "password",
+      user: "sysdba",
+      password: "masterkey",
     },
     pool: {
       min: 2,
       max: 10,
     },
     migrations: {
+      directory: "./src/database/knex/migrations",
       tableName: "knex_migrations",
     },
   },

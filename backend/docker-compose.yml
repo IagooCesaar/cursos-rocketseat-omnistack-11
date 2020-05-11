@@ -21,7 +21,7 @@ services:
     environment:
       POSTGRES_USER: sysdba
       POSTGRES_PASSWORD: masterkey
-      POSTGRES_DB: omnistack11
+      POSTGRES_DB: omnistack11-prod
 
     networks:
       - backend

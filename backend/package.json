@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "test": "cross-env NODE_ENV=test mocha ./tests/*/*.test.js",
-    "dev": "cross-env NODE_ENV=dev nodemon ./src/api.js"
+    "dev": "cross-env NODE_ENV=dev nodemon ./src/api.js",
+    "prod": "cross-env NODE_ENV=prod nodemon ./src/api.js"
   },
   "dependencies": {
     "@hapi/hapi": "^19.1.1",
