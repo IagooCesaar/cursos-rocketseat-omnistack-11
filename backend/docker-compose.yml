@@ -17,11 +17,12 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - "/database/postgres:/var/lib/postgresql/data"
+      - "./database/postgres:/var/lib/postgresql/data"
     environment:
       POSTGRES_USER: sysdba
       POSTGRES_PASSWORD: masterkey
       POSTGRES_DB: omnistack11-prod
+      PGDATA: "//var/lib/postgresql/pgdata"
 
     networks:
       - backend

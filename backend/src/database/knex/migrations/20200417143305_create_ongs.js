@@ -1,11 +1,11 @@
 exports.up = function (knex) {
   return knex.schema.createTable("ongs", function (table) {
     table.increments("id").primary();
-    table.string("name").notNullable();
-    table.string("password").notNullable();
-    table.string("email").notNullable();
-    table.string("whatsapp").notNullable();
-    table.string("city").notNullable();
+    table.string("name", 100).notNullable();
+    table.string("password", 60).notNullable();
+    table.string("email", 100).notNullable();
+    table.string("whatsapp", 13).notNullable();
+    table.string("city", 60).notNullable();
     table.string("uf", 2).notNullable();
     table.boolean("active").notNullable().defaultTo(true);
   });

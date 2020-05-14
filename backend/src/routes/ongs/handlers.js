@@ -14,20 +14,22 @@ const create = async (req, h) => {
 
     email = email.toLowerCase();
     const existingOng = await repoOngs.findByEmail(email);
-
-    if (existingOng && existingOng.length === 1) {
+    if (existingOng && existingOng.length >= 1) {
       throw new Error(ERR_ONGS_DUPLICATE_EMAIL);
     }
 
     password = await hash.make(password);
-    const [id] = await db("ongs").insert({
-      name,
-      email,
-      password,
-      whatsapp,
-      city,
-      uf,
-    });
+    const [id] = await db("ongs")
+      .insert({
+        name,
+        email,
+        password,
+        whatsapp,
+        city,
+        uf,
+      })
+      .returning("id");
+
     const result = await repoOngs.findByID(id);
 
     delete result.password;

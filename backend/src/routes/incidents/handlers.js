@@ -44,12 +44,14 @@ const create = async (req, h) => {
 
   const { title, description, value } = req.payload;
 
-  const [id] = await db("incidents").insert({
-    title,
-    description,
-    value,
-    ong_id: ongID,
-  });
+  const [id] = await db("incidents")
+    .insert({
+      title,
+      description,
+      value,
+      ong_id: ongID,
+    })
+    .returning("id");
 
   return h.response({ incidentID: id }).code(201);
 };

@@ -9,7 +9,8 @@ const toLogin = {
       .email({
         minDomainSegments: 2,
         tlds: { allow: ["com", "net", "br"] },
-      }),
+      })
+      .max(100),
     password: Joi.string().required(),
   }),
 };

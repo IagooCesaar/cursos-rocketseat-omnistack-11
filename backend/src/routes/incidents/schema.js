@@ -19,8 +19,8 @@ const toCreate = {
   headers,
   params: param,
   payload: Joi.object({
-    title: Joi.string().required().min(5),
-    description: Joi.string().required().min(10),
+    title: Joi.string().required().min(5).max(60),
+    description: Joi.string().required().min(10).max(250),
     value: Joi.number().required().min(0),
     active: Joi.boolean(),
   }),
@@ -39,8 +39,8 @@ const toUpdate = {
   headers,
   params,
   payload: Joi.object({
-    title: Joi.string().min(5),
-    description: Joi.string().min(10),
+    title: Joi.string().min(5).max(60),
+    description: Joi.string().min(10).max(250),
     value: Joi.number().min(0),
     active: Joi.boolean(),
   }),
